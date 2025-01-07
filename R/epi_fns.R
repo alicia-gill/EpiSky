@@ -4,9 +4,6 @@
 #' @title A collection of functions for the birth rate in used to generate epidemics
 #'
 #' @param t time
-#' @param stop_time length of the epidemic
-#' @param a start rate
-#' @param b end rate
 #'
 #' @return function
 NULL

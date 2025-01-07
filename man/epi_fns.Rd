@@ -21,12 +21,6 @@ decrease(t)
 }
 \arguments{
 \item{t}{time}
-
-\item{stop_time}{length of the epidemic}
-
-\item{a}{start rate}
-
-\item{b}{end rate}
 }
 \value{
 function
