@@ -2,13 +2,25 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Systematic Resampling
-NULL
-
+#'
+#' Implements systematic resampling.
+#'
+#' @param n_particles number of particles used in the sampling.
+#' @param norm_weights normalised weights of the particles.
+#'
+#' @return resampled particles
+#'
+#' @examples
+#' systematic_sample_cpp <- function(n_particles = 1000, norm_weights = rep(1/1000, 1000))
+#'
+#' @useDynLib EpiSky, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+#' @export
 systematic_sample_cpp <- function(n_particles, norm_weights) {
-    .Call('_EpiSky_systematic_sample_cpp', PACKAGE = 'EpiSky', n_particles, norm_weights)
+    .Call(`_EpiSky_systematic_sample_cpp`, n_particles, norm_weights)
 }
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('_EpiSky_RcppExport_registerCCallable', PACKAGE = 'EpiSky')
+    .Call(`_EpiSky_RcppExport_registerCCallable`)
 })
