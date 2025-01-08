@@ -11,7 +11,7 @@ epi_fn(birth_rate_fn, death_rate, stop_time, x0 = 1)
 
 \item{death_rate}{death rate of the epidemic.}
 
-\item{stop_time}{number of days to run the epidemic simulation for.}
+\item{stop_time}{number of time points to run the epidemic simulation for.}
 
 \item{x0}{initial number of infectives.}
 }

@@ -4,7 +4,7 @@
 #'
 #' @param birth_rate birth rate of the epidemic.
 #' @param death_rate death rate of the epidemic.
-#' @param stop_time number of days to run the epidemic simulation for.
+#' @param stop_time number of time points to run the epidemic simulation for.
 #' @param x0 initial number of infectives.
 #'
 #' @return data frame with: Index, Parent Index, Infection Status, Infection Time, Removal Time
