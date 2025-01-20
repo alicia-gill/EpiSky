@@ -31,10 +31,10 @@ change_point <- function(t) {
 #' @rdname epi_fns
 #' @export
 peak <- function(t) {
-  stop_time <- 20
-  peak_time <- 10
+  stop_time <- 40
+  peak_time <- 20
   min <- 0.1
-  max <- 0.5
+  max <- 0.3
 
   if (t < peak_time) {
     slope <- (max-min)/(peak_time)
