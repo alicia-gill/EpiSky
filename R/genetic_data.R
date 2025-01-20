@@ -4,14 +4,14 @@
 #'
 #' @param ptree object of class phylo.
 #' @param stop_time number of times the epidemic simulation was run for.
-#' @param time number of time points in the past the most recent leaf was sampled.
+#' @param ptree_lag number of time points in the past the most recent leaf was sampled.
 #'
 #' @return data frame with 3 columns and N+1 rows: Column 1 is time, column 2 is the number of lineages at the end of that time, column 3 is the number of coalescences on that time.
 #' @export
 #'
 #' @examples
-#' genetic_data(ptree = sample_tree, stop_time = 50, time = 3)
-genetic_data <- function(ptree, stop_time, time = 0) {
+#' genetic_data(ptree = sample_tree, stop_time = 50, ptree_lag = 3)
+genetic_data <- function(ptree, stop_time, ptree_lag = 0) {
   if (is.null(ptree)) {
     return(NULL)
   }
@@ -29,8 +29,8 @@ genetic_data <- function(ptree, stop_time, time = 0) {
     ltt$time <- ltt$time[-1]
     ltt$N <- ltt$N[-1]
   }
-  if (time > 0) {
-    ltt$time <- c(ltt$time - time, stop_time)
+  if (ptree_lag > 0) {
+    ltt$time <- c(ltt$time - ptree_lag, stop_time)
     ltt$N <- c(ltt$N, 0)
   }
 

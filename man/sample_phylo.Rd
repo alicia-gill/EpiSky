@@ -4,16 +4,16 @@
 \alias{sample_phylo}
 \title{Sample Phylogenetic Tree}
 \usage{
-sample_phylo(ptree, time = 0, pi0, pi1)
+sample_phylo(ptree, ptree_lag = 0, pi0, pi1)
 }
 \arguments{
 \item{ptree}{object of class phylo.}
 
-\item{time}{how many time points in the past the most recent leaf is.}
-
 \item{pi0}{probability of sampling a leaf at the present time.}
 
 \item{pi1}{probability of sampling a leaf before the present time.}
+
+\item{time}{how many time points in the past the most recent leaf is.}
 }
 \value{
 object of class phylo; the tree keeping only the sampled leaves.

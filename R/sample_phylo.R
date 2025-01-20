@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' sample_phylo(ptree = full_tree, pi0 = 0, pi1 = 0.01)
-sample_phylo <- function(ptree, time=0, pi0, pi1) {
+sample_phylo <- function(ptree, ptree_lag=0, pi0, pi1) {
   if (pi0 < 0 | pi0 > 1 | pi1 < 0 | pi1 > 1) {
     warning("pi must be between 0 and 1")
     break
@@ -36,7 +36,7 @@ sample_phylo <- function(ptree, time=0, pi0, pi1) {
   new_distance <- distToRoot(ptree)
   new_max <- max(new_distance)
 
-  if (time > 0) {
+  if (ptree_lag > 0) {
     time1 <- 1:n_leaves
     time0 <- NULL
   } else {
@@ -52,17 +52,17 @@ sample_phylo <- function(ptree, time=0, pi0, pi1) {
 
   if (!length(keep)) {
     new_tree <- NULL
-    time <- NULL
+    ptree_lag <- NULL
   } else {
     if (!length(keep0)) {
-      time <- min((new_max - new_distance)[keep1]) + time
+      ptree_lag <- min((new_max - new_distance)[keep1]) + ptree_lag
     } else {
-      time <- time
+      ptree_lag <- ptree_lag
     }
     new_tree <- ape::keep.tip(ptree, keep)
     class(new_tree) <- "phylo"
   }
 
-  output <- list("ptree"=new_tree, "time"=time)
+  output <- list("ptree"=new_tree, "ptree_lag"=ptree_lag)
   return(output)
 }

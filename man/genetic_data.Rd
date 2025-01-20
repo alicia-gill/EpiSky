@@ -4,14 +4,14 @@
 \alias{genetic_data}
 \title{Genetic Data}
 \usage{
-genetic_data(ptree, stop_time, time = 0)
+genetic_data(ptree, stop_time, ptree_lag = 0)
 }
 \arguments{
 \item{ptree}{object of class phylo.}
 
 \item{stop_time}{number of times the epidemic simulation was run for.}
 
-\item{time}{number of time points in the past the most recent leaf was sampled.}
+\item{ptree_lag}{number of time points in the past the most recent leaf was sampled.}
 }
 \value{
 data frame with 3 columns and N+1 rows: Column 1 is time, column 2 is the number of lineages at the end of that time, column 3 is the number of coalescences on that time.
@@ -20,5 +20,5 @@ data frame with 3 columns and N+1 rows: Column 1 is time, column 2 is the number
 Discretises a phylogenetic tree.
 }
 \examples{
-genetic_data(ptree = sample_tree, stop_time = 50, time = 3)
+genetic_data(ptree = sample_tree, stop_time = 50, ptree_lag = 3)
 }

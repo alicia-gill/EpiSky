@@ -13,7 +13,7 @@ pmmh(
   x0 = 1,
   death_rate,
   ptree,
-  time = 0,
+  ptree_lag = 0,
   genetic_data = NULL,
   sample_prevalence,
   sigma_mean = 0.1,
@@ -53,7 +53,7 @@ pmmh(
 
 \item{ptree}{object of class phylo.}
 
-\item{time}{time in the past the most recent leaf was sampled relative to the present.}
+\item{ptree_lag}{time in the past the most recent leaf was sampled relative to the present.}
 
 \item{genetic_data}{data frame of time, number of lineages and number of coalescences.}
 
@@ -102,5 +102,5 @@ list containing: birth rate, prevalence, time 0 prevalence, linear gaussian vari
 Implements an particle marginal Metropolis--Hastings algorithm with adaptive resampling when the epidemic with birth rate varying over time has been partially observed with known proportion. MH adaptation of shape and scale of rho and sigma. Unknown optimum number of particles.
 }
 \examples{
-pmmh(iter = 100000, sigma0 = 0.1, x0 = 1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, time = 0, sample_prevalence = noisy_prev, print = T)
+pmmh(iter = 100000, sigma0 = 0.1, x0 = 1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, ptree_lag = 0, sample_prevalence = noisy_prev, print = T)
 }

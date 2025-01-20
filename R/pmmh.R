@@ -10,7 +10,7 @@
 #' @param x0 initial value of the prevalence at time 0.
 #' @param death_rate death rate of the epidemic.
 #' @param ptree object of class phylo.
-#' @param time time in the past the most recent leaf was sampled relative to the present.
+#' @param ptree_lag time in the past the most recent leaf was sampled relative to the present.
 #' @param genetic_data data frame of time, number of lineages and number of coalescences.
 #' @param sample_prevalence data frame of observed prevalence by time.
 #' @param sigma_mean exponential prior mean of sigma.
@@ -36,15 +36,15 @@
 #' @export
 #'
 #' @examples
-#' pmmh(iter = 100000, sigma0 = 0.1, x0 = 1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, time = 0, sample_prevalence = noisy_prev, print = T)
-pmmh <- function(iter, max_time = Inf, target_acceptance = 0.1, sigma0, reporting_prob0, x0 = 1, death_rate, ptree, time = 0, genetic_data = NULL, sample_prevalence, sigma_mean = 0.1, pobs_prior = "uniform", pobs_min = 0, pobs_max = 1, pobs_alpha = 1, pobs_beta = 1, x0_prior = "uniform", x0_min=1, x0_max=Inf, x0_mean=10, x0_var=100, n_particles = NULL, ess_threshold = n_particles/2, min_n_particles = 1000, max_n_particles = 10000, resampling_scheme = "systematic", backward_sim = TRUE, print = F) {
+#' pmmh(iter = 100000, sigma0 = 0.1, x0 = 1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, ptree_lag = 0, sample_prevalence = noisy_prev, print = T)
+pmmh <- function(iter, max_time = Inf, target_acceptance = 0.1, sigma0, reporting_prob0, x0 = 1, death_rate, ptree, ptree_lag = 0, genetic_data = NULL, sample_prevalence, sigma_mean = 0.1, pobs_prior = "uniform", pobs_min = 0, pobs_max = 1, pobs_alpha = 1, pobs_beta = 1, x0_prior = "uniform", x0_min=1, x0_max=Inf, x0_mean=10, x0_var=100, n_particles = NULL, ess_threshold = n_particles/2, min_n_particles = 1000, max_n_particles = 10000, resampling_scheme = "systematic", backward_sim = TRUE, print = F) {
   sys_time <- as.numeric(Sys.time())
 
   #if the number of particles is not specified, use find_nopt to choose
   if (is.null(n_particles)) {
     n_particles <- rep(NA, 3)
     for (i in 1:3) {
-      n_particles[i] <- find_nopt(sigma0 = sigma0, reporting_prob0 = reporting_prob0, x0 = x0, death_rate = death_rate, ptree = ptree, time = time, sample_prevalence = sample_prevalence, sigma_mean = sigma_mean, pobs_prior = pobs_prior, pobs_min = pobs_min, pobs_max = pobs_max, pobs_alpha = pobs_alpha, pobs_beta = pobs_beta, x0_prior = x0_prior, x0_min = x0_min, x0_max = x0_max, x0_mean = x0_mean, x0_var = x0_var, resampling_scheme = resampling_scheme, print = print)
+      n_particles[i] <- find_nopt(sigma0 = sigma0, reporting_prob0 = reporting_prob0, x0 = x0, death_rate = death_rate, ptree = ptree, ptree_lag = ptree_lag, sample_prevalence = sample_prevalence, sigma_mean = sigma_mean, pobs_prior = pobs_prior, pobs_min = pobs_min, pobs_max = pobs_max, pobs_alpha = pobs_alpha, pobs_beta = pobs_beta, x0_prior = x0_prior, x0_min = x0_min, x0_max = x0_max, x0_mean = x0_mean, x0_var = x0_var, resampling_scheme = resampling_scheme, print = print)
     }
     if (sum(n_particles)==0) {
       n_particles <- max_n_particles
@@ -56,17 +56,16 @@ pmmh <- function(iter, max_time = Inf, target_acceptance = 0.1, sigma0, reportin
   }
 
   #prevalence goes on one time longer than epidemic
-  trailing_zeros <- min(time, which.max(rev(sample_prevalence[,2])>0)-1)
+  trailing_zeros <- min(ptree_lag, which.max(rev(sample_prevalence[,2])>0)-1)
   n <- nrow(sample_prevalence) - trailing_zeros
   stop_time <- n - 1
-  time <- time - trailing_zeros
+  ptree_lag <- ptree_lag - trailing_zeros
 
   #if genetic_data is not specified, calculate it from the tree
   if (is.null(genetic_data)) {
-    genetic_data <- genetic_data(ptree = ptree, stop_time = stop_time, time = time)
+    genetic_data <- genetic_data(ptree = ptree, stop_time = stop_time, ptree_lag = ptree_lag)
   }
   sample_prevalence <- sample_prevalence[1:n,]
-
 
   #initialise output
   b_matrix <- matrix(NA, nrow=iter, ncol=stop_time)

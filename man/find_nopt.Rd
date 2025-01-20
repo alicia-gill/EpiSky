@@ -10,7 +10,7 @@ find_nopt(
   x0 = 1,
   death_rate,
   ptree,
-  time = 0,
+  ptree_lag = 0,
   sample_prevalence,
   sigma_mean = 0.1,
   pobs_prior = "uniform",
@@ -39,7 +39,7 @@ find_nopt(
 
 \item{ptree}{object of class phylo.}
 
-\item{time}{number of times in the past the most recent leaf was sampled.}
+\item{ptree_lag}{time in the past the most recent leaf was sampled relative to the present.}
 
 \item{sample_prevalence}{data frame of observed prevalence per time.}
 
@@ -76,5 +76,5 @@ optimal number of particles
 Find optimal number of particles
 }
 \examples{
-find_nopt(sigma0 = 0.1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, time = 1, sample_prevalence = noisy_prev, print = T)
+find_nopt(sigma0 = 0.1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, ptree_lag = 1, sample_prevalence = noisy_prev, print = T)
 }

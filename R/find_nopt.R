@@ -5,7 +5,7 @@
 #' @param x0 prevalence at time 0.
 #' @param death_rate death rate of the epidemic.
 #' @param ptree object of class phylo.
-#' @param time number of times in the past the most recent leaf was sampled.
+#' @param ptree_lag time in the past the most recent leaf was sampled relative to the present.
 #' @param sample_prevalence data frame of observed prevalence per time.
 #' @param sigma_mean exponential prior mean of sigma.
 #' @param pobs_prior "uniform" or "beta"; prior distribution on reporting probability.
@@ -25,14 +25,14 @@
 #' @export
 #'
 #' @examples
-#' find_nopt(sigma0 = 0.1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, time = 1, sample_prevalence = noisy_prev, print = T)
-find_nopt <- function(sigma0, reporting_prob0, x0 = 1, death_rate, ptree, time = 0, sample_prevalence, sigma_mean = 0.1, pobs_prior = "uniform", pobs_min = 0, pobs_max = 1, pobs_alpha = 1, pobs_beta = 1, x0_prior = "uniform", x0_min=1, x0_max=Inf, x0_mean=10, x0_var=100, ess_threshold_prop = 0.5, resampling_scheme = "systematic", print = F) {
+#' find_nopt(sigma0 = 0.1, reporting_prob0 = 0.5, death_rate = 0.1, ptree = sample_tree, ptree_lag = 1, sample_prevalence = noisy_prev, print = T)
+find_nopt <- function(sigma0, reporting_prob0, x0 = 1, death_rate, ptree, ptree_lag = 0, sample_prevalence, sigma_mean = 0.1, pobs_prior = "uniform", pobs_min = 0, pobs_max = 1, pobs_alpha = 1, pobs_beta = 1, x0_prior = "uniform", x0_min=1, x0_max=Inf, x0_mean=10, x0_var=100, ess_threshold_prop = 0.5, resampling_scheme = "systematic", print = F) {
 
-  trailing_zeros <- min(time, which.max(rev(sample_prevalence[,2])>0)-1)
+  trailing_zeros <- min(ptree_lag, which.max(rev(sample_prevalence[,2])>0)-1)
   n <- nrow(sample_prevalence) - trailing_zeros
   stop_time <- n - 1
-  time <- time - trailing_zeros
-  genetic_data <- genetic_data(ptree = ptree, stop_time = stop_time, time = time)
+  ptree_lag <- ptree_lag - trailing_zeros
+  genetic_data <- genetic_data(ptree = ptree, stop_time = stop_time, ptree_lag = ptree_lag)
   sample_prevalence <- sample_prevalence[1:n,]
 
   sigma_old <- sigma0
