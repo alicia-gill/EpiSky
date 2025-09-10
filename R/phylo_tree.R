@@ -11,6 +11,7 @@
 #' @examples
 #' phylo_tree(epidemic = epi, stop_time = 50)
 phylo_tree <- function(epidemic, stop_time) {
+  epidemic <- epidemic[order(epidemic$index),]
   n_total <- nrow(epidemic)
 
   #sets recovery time as stop time (t_stop) for those still infectious at the end
@@ -18,7 +19,8 @@ phylo_tree <- function(epidemic, stop_time) {
   epidemic$rem_time[n_inf] <- stop_time
 
   #initial empty dataset
-  tree_data <- list("start_node","end_node","start_time","end_time","edge_length")
+  # tree_data <- list("start_node","end_node","start_time","end_time","edge_length")
+  start_node <- end_node <- start_time <- end_time <- edge_length <- c()
 
   #edge matrix
   for (i in 1:n_total) {
@@ -27,42 +29,62 @@ phylo_tree <- function(epidemic, stop_time) {
     l <- length(c)
     if (l > 1) {
       for (j in 1:(l-1)) {
-        tree_data$start_node <- c(tree_data$start_node, c[j])
-        tree_data$end_node <- c(tree_data$end_node, c[j+1])
+        # tree_data$start_node <- c(tree_data$start_node, c[j])
+        # tree_data$end_node <- c(tree_data$end_node, c[j+1])
+        start_node <- c(start_node, c[j])
+        end_node <- c(end_node, c[j+1])
       }
     }
-    tree_data$start_node <- c(tree_data$start_node, c[l])
-    tree_data$end_node <- c(tree_data$end_node, i)
+    # tree_data$start_node <- c(tree_data$start_node, c[l])
+    # tree_data$end_node <- c(tree_data$end_node, i)
+    start_node <- c(start_node, c[l])
+    end_node <- c(end_node, i)
   }
 
-  E <- length(tree_data$start_node)
+  # E <- length(tree_data$start_node)
+  E <- length(start_node)
   if (E != 2 * n_total - 1) {
     print("Wrong number of edges!")
     break
   }
 
+  # for (i in 1:E) {
+  #   #start time is infection time of whoever generated that node
+  #   #eg person 1 generates node n_total+1, person 2 generates node n_total+2, etc
+  #   tree_data$start_time[i] <- epidemic$inf_time[tree_data$start_node[i] - n_total]
+  #   #if the end node is a leaf, then end time is recovery time of that leaf
+  #   if (tree_data$end_node[i] <= n_total) {
+  #     tree_data$end_time[i] <- epidemic$rem_time[tree_data$end_node[i]]
+  #   } else { #otherwise, it's an infection time
+  #     tree_data$end_time[i] <- epidemic$inf_time[tree_data$end_node[i] - n_total]
+  #   }
+  #   #length is end_time-start_time
+  #   tree_data$edge_length[i] <- tree_data$end_time[i] - tree_data$start_time[i]
+  # }
   for (i in 1:E) {
     #start time is infection time of whoever generated that node
     #eg person 1 generates node n_total+1, person 2 generates node n_total+2, etc
-    tree_data$start_time[i] <- epidemic$inf_time[tree_data$start_node[i] - n_total]
+    start_time[i] <- epidemic$inf_time[start_node[i] - n_total]
     #if the end node is a leaf, then end time is recovery time of that leaf
-    if (tree_data$end_node[i] <= n_total) {
-      tree_data$end_time[i] <- epidemic$rem_time[tree_data$end_node[i]]
+    if (end_node[i] <= n_total) {
+      end_time[i] <- epidemic$rem_time[end_node[i]]
     } else { #otherwise, it's an infection time
-      tree_data$end_time[i] <- epidemic$inf_time[tree_data$end_node[i] - n_total]
+      end_time[i] <- epidemic$inf_time[end_node[i] - n_total]
     }
     #length is end_time-start_time
-    tree_data$edge_length[i] <- tree_data$end_time[i] - tree_data$start_time[i]
+    edge_length[i] <- end_time[i] - start_time[i]
   }
 
   #turn into a tree
   tree <- list()
   class(tree) <- "phylo"
 
-  tree$edge <- matrix(c(tree_data$start_node,tree_data$end_node),ncol=2,byrow=F)
+  # tree$edge <- matrix(c(tree_data$start_node,tree_data$end_node),ncol=2,byrow=F)
+  tree$edge <- matrix(c(start_node,end_node),ncol=2,byrow=F)
   tree$Nnode <- n_total
   tree$tip.label <- 1:n_total
-  tree$edge.length <- tree_data$edge_length
+  # tree$edge.length <- tree_data$edge_length
+  tree$edge.length <- edge_length
   tree$node.label <- (n_total+1):(E+1)
 
   return(tree)
